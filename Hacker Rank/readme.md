@@ -24,4 +24,10 @@
 
 - `SELECT ROUND(LONG_W, 4) FROM STATION WHERE LAT_N < 137.2345 ORDER BY LAT_N DESC LIMIT 1;`
 
-**(7) **
+**(7) Given the CITY and COUNTRY tables, query the names of all cities where the CONTINENT is 'Africa'.**
+
+- `SELECT CI.NAME FROM CITY AS CI JOIN COUNTRY AS CO ON CO.CODE = CI.COUNTRYCODE WHERE CO.CONTINENT = 'Africa';`
+
+**(8) Given the CITY and COUNTRY tables, query the names of all the continents (COUNTRY.Continent) and their respective average city populations (CITY.Population) rounded down to the nearest integer.**
+
+- `SELECT CO.CONTINENT, FLOOR(AVG(CI.POPULATION)) FROM CITY AS CI JOIN COUNTRY AS CO ON CO.CODE = CI.COUNTRYCODE GROUP BY CO.CONTINENT;`
