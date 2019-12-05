@@ -31,3 +31,7 @@
 **(8) Given the CITY and COUNTRY tables, query the names of all the continents (COUNTRY.Continent) and their respective average city populations (CITY.Population) rounded down to the nearest integer.**
 
 - `SELECT CO.CONTINENT, FLOOR(AVG(CI.POPULATION)) FROM CITY AS CI JOIN COUNTRY AS CO ON CO.CODE = CI.COUNTRYCODE GROUP BY CO.CONTINENT;`
+
+**(9) You are given a table, BST, containing two columns: N and P, where N represents the value of a node in Binary Tree, and P is the parent of N. Write a query to find the node type of Binary Tree ordered by the value of the node (root, leaf, inner).**
+
+- `SELECT N, IF(P IS NULL, 'Root', IF(B.N IN (SELECT P FROM BST), 'Inner', 'Leaf')) FROM BST AS B ORDER BY N;`
