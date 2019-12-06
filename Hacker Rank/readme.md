@@ -80,3 +80,9 @@ SELECT MIN(Doctor), MIN(Professor), MIN(Singer), MIN(Actor) FROM
        FROM OCCUPATIONS ORDER BY Name) AS t
 GROUP BY RowLine;
 ```
+
+**(12) Euclidean Distance**
+
+```
+SELECT ROUND(SQRT(POW(MIN(LAT_N)-MAX(LAT_N), 2) + POW(MIN(LONG_W)-MAX(LONG_W), 2)), 4) FROM STATION;
+```
