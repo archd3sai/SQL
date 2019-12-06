@@ -35,3 +35,9 @@
 **(9) You are given a table, BST, containing two columns: N and P, where N represents the value of a node in Binary Tree, and P is the parent of N. Write a query to find the node type of Binary Tree ordered by the value of the node (root, leaf, inner).**
 
 - `SELECT N, IF(P IS NULL, 'Root', IF(B.N IN (SELECT P FROM BST), 'Inner', 'Leaf')) FROM BST AS B ORDER BY N;`
+
+**(10) Query an alphabetically ordered list of all names in OCCUPATIONS, immediately followed by the first letter of each profession as a parenthetical (i.e.: enclosed in parentheses). For example: AnActorName(A), ADoctorName(D), AProfessorName(P), and ASingerName(S).
+- Query the number of ocurrences of each occupation in OCCUPATIONS. Sort the occurrences in ascending order.**
+
+-`SELECT CONCAT(Name, '(' ,SUBSTR(Occupation,1,1), ')') FROM OCCUPATIONS ORDER BY Name;
+SELECT CONCAT('There are a total of ', COUNT(*), ' ', LOWER(Occupation), 's.') FROM OCCUPATIONS GROUP BY Occupation ORDER BY COUNT(Occupation), Occupation; `
