@@ -93,3 +93,14 @@ SELECT ROUND(SQRT(POW(MIN(LAT_N)-MAX(LAT_N), 2) + POW(MIN(LONG_W)-MAX(LONG_W), 2
 SELECT (months*salary) as earnings, COUNT(*) FROM Employee GROUP BY earnings ORDER BY earnings DESC LIMIT 1;
 ```
 
+**(14) A median is defined as a number separating the higher half of a data set from the lower half. Query the median of the Northern Latitudes (LAT_N) from STATION and round your answer to 4 decimal places.**
+
+```
+SET @r1 = -1;
+
+SELECT ROUND(AVG(t.LAT_N),4) FROM
+(
+SELECT @r1:=@r1+1 as rowsN, s.LAT_N as lat_n FROM STATION AS s ORDER BY s.LAT_N
+) AS t WHERE t.rowsN IN (FLOOR(@r1/2), CEIL(@r1/2))
+```
+
