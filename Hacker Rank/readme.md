@@ -120,3 +120,24 @@ WHERE c.company_code = l.company_code AND
       m.manager_code = e.manager_code
 GROUP BY c.company_code, c.founder ORDER BY c.company_code;
 ```
+
+**(16) Julia just finished conducting a coding contest, and she needs your help assembling the leaderboard! Write a query to print the respective hacker_id and name of hackers who achieved full scores for more than one challenge. Order your output in descending order by the total number of challenges in which the hacker earned a full score. If more than one hacker received full scores in same number of challenges, then sort them by ascending hacker_id.**
+
+```
+SELECT H.hacker_id, H.name 
+    FROM Hackers AS H 
+    JOIN Submissions AS S ON H.hacker_id = S.hacker_id
+    JOIN Challenges AS C ON S.challenge_id = C.challenge_id
+    JOIN Difficulty AS D ON C.difficulty_level = D.difficulty_level
+    WHERE S.score = D.score
+    GROUP BY H.hacker_id, H.name HAVING COUNT(*) > 1 ORDER BY COUNT(*) DESC, h.hacker_id;
+```
+
+**(17) Ketty gives Eve a task to generate a report containing three columns: Name, Grade and Mark. Ketty doesn't want the NAMES of those students who received a grade lower than 8. The report must be in descending order by grade -- i.e. higher grades are entered first. If there is more than one student with the same grade (8-10) assigned to them, order those particular students by their name alphabetically. Finally, if the grade is lower than 8, use "NULL" as their name and list them by their grades in descending order. If there is more than one student with the same grade (1-7) assigned to them, order those particular students by their marks in ascending order.**
+
+```
+SELECT IF(G.Grade<8, NULL, S.Name), G.Grade, S.Marks 
+    FROM Students AS S
+    JOIN Grades AS G ON S.Marks BETWEEN G.Min_Mark AND G.Max_Mark
+    ORDER BY G.Grade DESC, IF(G.Grade<8, S.Marks, S.Name);
+```    
