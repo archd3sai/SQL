@@ -141,3 +141,14 @@ SELECT IF(G.Grade<8, NULL, S.Name), G.Grade, S.Marks
     JOIN Grades AS G ON S.Marks BETWEEN G.Min_Mark AND G.Max_Mark
     ORDER BY G.Grade DESC, IF(G.Grade<8, S.Marks, S.Name);
 ```    
+
+**(18) Hermione decides the best way to choose is by determining the minimum number of gold galleons needed to buy each non-evil wand of high power and age. Write a query to print the id, age, coins_needed, and power of the wands that Ron's interested in, sorted in order of descending power. If more than one wand has same power, sort the result in order of descending age.**
+
+```
+SELECT id, age, m.coins_needed, m.power FROM 
+(SELECT code, power, MIN(coins_needed) AS coins_needed FROM Wands GROUP BY code, power) AS m
+JOIN Wands AS w ON m.code = w.code AND m.power = w.power AND m.coins_needed = w.coins_needed
+JOIN Wands_Property AS p ON m.code = p.code
+WHERE p.is_evil = 0
+ORDER BY m.power DESC, age DESC;
+```
