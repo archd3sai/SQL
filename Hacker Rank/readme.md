@@ -174,3 +174,38 @@ UNION
 WHERE EXISTS(SELECT X, Y FROM Functions WHERE f1.X = Y AND f1.Y = X AND f1.X < X))
 ORDER BY X;
 ```
+
+**(21) Write a query to output the start and end dates of projects listed by the number of days it took to complete the project in ascending order. If there is more than one project that have the same number of completion days, then order by the start date of the project.**
+
+```
+SELECT Start_Date, MIN(End_Date) FROM
+(SELECT Start_Date FROM Projects WHERE Start_Date NOT IN (SELECT End_Date FROM Projects)) AS s,
+(SELECT End_Date FROM Projects WHERE End_Date NOT IN (SELECT Start_Date FROM Projects)) AS e
+WHERE Start_Date < End_Date
+GROUP BY Start_Date
+ORDER BY DATEDIFF(MIN(End_Date), Start_Date), Start_Date;
+```
+
+**(22) The total score of a hacker is the sum of their maximum scores for all of the challenges. Write a query to print the hacker_id, name, and total score of the hackers ordered by the descending score. If more than one hacker achieved the same total score, then sort the result by ascending hacker_id. Exclude all hackers with a total score of 0 from your result.**
+
+```
+SELECT hacker_id, name, SUM(MaxScore) AS TotalScore FROM
+    (SELECT Hackers.hacker_id, name, challenge_id, MAX(score) AS MaxScore
+    FROM Hackers
+    JOIN Submissions ON Hackers.hacker_id = Submissions.hacker_id
+    GROUP BY Hackers.hacker_id, name, challenge_id) AS T1
+    GROUP BY hacker_id, name
+    HAVING TotalScore > 0
+    ORDER BY TotalScore DESC, hacker_id
+```
+
+**(23) Julia asked her students to create some coding challenges. Write a query to print the hacker_id, name, and the total number of challenges created by each student. Sort your results by the total number of challenges in descending order. If more than one student created the same number of challenges, then sort the result by hacker_id. If more than one student created the same number of challenges and the count is less than the maximum number of challenges created, then exclude those students from the result.**
+
+```
+SELECT c.hacker_id, h.name, COUNT(c.challenge_id) AS cnt 
+FROM Hackers AS h JOIN Challenges AS c ON h.hacker_id = c.hacker_id
+GROUP BY c.hacker_id, h.name HAVING
+cnt = (SELECT COUNT(c1.challenge_id) FROM Challenges AS c1 GROUP BY c1.hacker_id ORDER BY COUNT(*) DESC LIMIT 1) OR
+cnt NOT IN (SELECT COUNT(c2.challenge_id) FROM Challenges AS c2 GROUP BY c2.hacker_id HAVING c2.hacker_id <> c.hacker_id)
+ORDER BY cnt DESC, c.hacker_id;
+```
