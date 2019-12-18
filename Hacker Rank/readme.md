@@ -216,3 +216,28 @@ ORDER BY cnt DESC, c.hacker_id;
 SELECT CITY, LENGTH(CITY) FROM STATION ORDER BY LENGTH(CITY), CITY LIMIT 1;
 SELECT CITY, LENGTH(CITY) FROM STATION ORDER BY LENGTH(CITY) DESC, CITY LIMIT 1;
 ```
+
+**(25) Query the list of CITY names starting with vowels (i.e., a, e, i, o, or u) from STATION. Your result cannot contain duplicates.**
+
+```
+SELECT DISTINCT(CITY) FROM STATION WHERE CITY REGEXP '^[aeiou]'  
+```
+
+**(26) Query the list of CITY names from STATION that do not end with vowels. Your result cannot contain duplicates.**
+
+```
+SELECT DISTINCT CITY FROM STATION WHERE CITY REGEXP '[^aeiou]$';
+```
+
+**(27) Query the list of CITY names from STATION that either do not start with vowels or do not end with vowels. Your result cannot contain duplicates.**
+
+```
+SELECT DISTINCT CITY FROM STATION WHERE CITY REGEXP '^[^aeiou]|[^aeiou]$';
+```
+
+**(28) Write a query to print the pattern P(20).**
+
+```
+SET @number = 21;
+SELECT REPEAT('* ', @number := @number-1) FROM information_schema.tables WHERE @number > 0;
+```
