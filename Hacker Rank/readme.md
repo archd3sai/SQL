@@ -241,3 +241,9 @@ SELECT DISTINCT CITY FROM STATION WHERE CITY REGEXP '^[^aeiou]|[^aeiou]$';
 SET @number = 21;
 SELECT REPEAT('* ', @number := @number-1) FROM information_schema.tables WHERE @number > 0;
 ```
+
+**(29) Query the Name of any student in STUDENTS who scored higher than 75 Marks. Order your output by the last three characters of each name. If two or more students both have names ending in the same last three characters (i.e.: Bobby, Robby, etc.), secondary sort them by ascending ID.**
+
+```
+SELECT Name FROM STUDENTS WHERE Marks > 75 ORDER BY SUBSTR(Name,-3), ID ASC
+```
