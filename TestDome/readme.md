@@ -18,3 +18,9 @@ SELECT DISTINCT name FROM (SELECT name FROM dogs
 ```
 SELECT userId, AVG(duration) FROM sessions GROUP BY userId HAVING count(id) > 1;
 ```
+
+**(4) Each item in a web shop belongs to a seller. To ensure service quality, each seller has a rating. The data are kept in the following two tables: sellers and items. Write a query that selects the item name and the name of its seller for each item that belongs to a seller with a rating greater than 4. The query should return the name of the item as the first column and name of the seller as the second column.**
+
+```
+SELECT I.name, S.name FROM items as I, sellers as S WHERE I.sellerId == S.id AND S.rating > 4
+```
