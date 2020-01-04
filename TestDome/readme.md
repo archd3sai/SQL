@@ -1,4 +1,4 @@
-
+## Easy
 **(1) A table containing the students enrolled in a yearly course has incorrect data in records with ids between 20 and 100 (inclusive). Write a query that updates the field 'year' of every faulty record to 2015.**
 
 ```
@@ -29,6 +29,7 @@ SELECT I.name, S.name FROM items as I, sellers as S WHERE I.sellerId == S.id AND
 ```
 <br/>
 
+## Hard
 **(5) An insurance company maintains records of sales made by its employees. Each employee is assigned to a state. States are grouped under regions. The following tables contain the data:**
 ```
 TABLE regions
@@ -53,7 +54,7 @@ Management requires a comparative region sales analysis report.
 ```
 **Write a query that returns:**
 
-**(1) The region name, (2) Average sales per employee for the region (Average sales = Total sales made for the region / Number of employees in the region), (3) The difference between the average sales of the region with the highest average sales, and the average sales per employee for the region (average sales to be calculated as explained above).**
+**The region name, Average sales per employee for the region (Average sales = Total sales made for the region / Number of employees in the region), The difference between the average sales of the region with the highest average sales, and the average sales per employee for the region (average sales to be calculated as explained above).**
 
 **A region with no sales should be also returned. Use 0 for average sales per employee for such a region when calculating the 2nd and the 3rd column.**
 
@@ -65,3 +66,5 @@ SELECT region, Avg_Sales, MAX(Avg_Sales) OVER() - Avg_Sales as Diff_Sales FROM
     LEFT JOIN sales as sl ON e.id = sl.employeeId
     GROUP BY r.id) AS T
 ```
+<br/>
+
