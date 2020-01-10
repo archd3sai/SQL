@@ -45,4 +45,45 @@ LEFT JOIN
      GROUP BY post_ID ) AS derivComm ON P.ID = derivComm.post_ID
 ```
 
-## 
+## Top n rows per group
+
+```
+(SELECT * FROM Employee WHERE Department_id = 1 ORDER BY Salary DESC LIMIT 0,2)
+UNION
+(SELECT * FROM Employee WHERE Department_id = 2 ORDER BY Salary DESC LIMIT 0,2)
+UNION
+(SELECT * FROM Employee WHERE Department_id = 3 ORDER BY Salary DESC LIMIT 0,2)
+UNION
+(SELECT * FROM Employee WHERE Department_id = 4 ORDER BY Salary DESC LIMIT 0,2)
+```
+
+## Optimization
+
+(1) Correlated Subquery
+- A subquery is said to be correlated when the subquery relates to the main query.
+
+**For each department, the data about the employee having started to work the first in (most senior):**
+```
+SELECT dep.Name AS Department, emp.First_name, emp.Last_name, emp.Start
+FROM Employee AS emp, Department AS dep
+WHERE emp.Department_ID = dep.ID AND emp.Start = (
+	SELECT MIN(e.Start)
+	FROM Employee AS e
+	WHERE e.Department_ID = emp.Department_ID
+)
+```
+
+(2) Optimization
+- Instead of computing the minimal start date for a given department at each iteration in the WHERE clause, let’s compute first all minimal start dates per department and store them in a derived table. Then let’s perform a self-join for filtering by minimal start date.
+
+- The trick lies in the use of both Start and Department_id as keys for doing the self-join.
+
+```
+SELECT D.Name AS Department, e.First_name, e.Last_name, e.Start
+FROM (
+    SELECT e.Department_id AS Dep_id, MIN(e.Start) AS Start
+    FROM Employee AS e
+    GROUP BY e.Department_id
+    ) AS Min_start_by_dep, Employee AS e, Department AS D
+WHERE Min_start_by_dep.Start = e.Start AND e.Department_id = Min_start_by_dep.Dep_id AND e.Department_id = D.ID
+```
