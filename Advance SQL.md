@@ -87,3 +87,21 @@ FROM (
     ) AS Min_start_by_dep, Employee AS e, Department AS D
 WHERE Min_start_by_dep.Start = e.Start AND e.Department_id = Min_start_by_dep.Dep_id AND e.Department_id = D.ID
 ```
+
+
+## Case Functions
+
+```
+SELECT 
+  CASE WHEN day_of_week in ('Sat', 'Sun') 
+    then 'Weekend' else 'Weekday' end as day_type
+FROM table_a;
+```
+
+```
+SELECT 
+  SUM(
+    CASE WHEN day_of_week in ('Sat', 'Sun')
+    THEN 1 ELSE 0 END) as num_weekend_days
+FROM table_a;
+```
