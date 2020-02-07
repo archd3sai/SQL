@@ -16,13 +16,14 @@ SELECT 100*COUNT(attendance)/(SELECT COUNT(*) FROM students)
 
 - Which grade level had the largest drop in attendance between yesterday and today?
 ```
-(SELECT grade_level, date, COUNT(attendance) AS att FROM attendances AS A
-         LEFT JOIN students AS S
-         ON A.student_id = S.student_id
-         GROUP BY grade_level, date
-         HAVING attendance == "yes"
-         AND (date == "02-06-2020" OR date == "02-05-2020")
-         ORDER BY grade_level, date DESC) AS t
+SELECT grade_level, SUM(CASE WHEN A.date = DATE('now') THEN 1 ELSE -1) AS attendance_drop
+         FROM attendances AS A
+         INNER JOIN students AS S
+         ON A.student_id = S.student_id 
+         WHERE A.attendance = "yes" AND A.date IN (date('now'), date('now', '-1 day'))
+         GROUP BY grade_level
+         ORDER BY attendance_drop DESC
+         LIMIT 1
 ```
 
 <br/>
