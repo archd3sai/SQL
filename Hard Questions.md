@@ -77,3 +77,12 @@ FROM
 WHERE
 g.rowindex IN (FLOOR(@rowindex / 2) , CEIL(@rowindex / 2));
 ```
+<br/>
+
+**(4) Histogram**
+```
+select floor(mycol/10)*10 as bin_floor, count(*)
+from mytable
+group by bin_floor
+order by bin_floor
+```
