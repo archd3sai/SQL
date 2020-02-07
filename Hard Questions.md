@@ -53,8 +53,8 @@ I need to make a query and get something like this:
 <br/>
 
 ```
-SELECT idItem, (case when type=1 then value end) as valtype1,
-               (case when type=2 then value end) as valtype2,
+SELECT idItem, MAX(case when type=1 then value end) as valtype1,
+               MAX(case when type=2 then value end) as valtype2,
                name
 FROM extrafieldvalues a INNER JOIN items b on a.idItem=b.id
 GROUP BY idItem,name
