@@ -6,23 +6,23 @@ Using this data, could you answer questions like the following:
 
 - What percent of students attend school on their birthday?
 ```
-SELECT COUNT(attendance)/(SELECT COUNT(*) FROM students) 
+SELECT 100*COUNT(attendance)/(SELECT COUNT(*) FROM students) 
                          FROM attendances AS A
-                         RIGHT JOIN students AS S
-                         ON A.date = S.date_of_birth 
-                         AND A.student_id = S.student_id
+                         JOIN students AS S
+                         ON A.date = S.date_of_birth AND A.student_id = S.student_id
                          WHERE attendance == "yes"
 ```
 <br/>
 
 - Which grade level had the largest drop in attendance between yesterday and today?
 ```
-SELECT grade_level, COUNT(attendance) FROM attendances AS A
+(SELECT grade_level, date, COUNT(attendance) AS att FROM attendances AS A
          LEFT JOIN students AS S
          ON A.student_id = S.student_id
-         GROUP BY grade_level
+         GROUP BY grade_level, date
          HAVING attendance == "yes"
-         AND date == "02-06-2020"
+         AND (date == "02-06-2020" OR date == "02-05-2020")
+         ORDER BY grade_level, date DESC) AS t
 ```
 
 <br/>
@@ -56,6 +56,23 @@ I need to make a query and get something like this:
 SELECT idItem, MAX(case when type=1 then value end) as valtype1,
                MAX(case when type=2 then value end) as valtype2,
                name
-FROM extrafieldvalues a INNER JOIN items b on a.idItem=b.id
-GROUP BY idItem,name
+FROM extrafieldvalues AS A JOIN items AS B 
+                           ON A.idItem=B.id
+GROUP BY idItem, name;
+```
+<br/>
+
+**(3) Finding a median**
+```
+SET @rowindex := -1;
+ 
+SELECT
+   AVG(g.grade)
+FROM
+   (SELECT @rowindex:=@rowindex + 1 AS rowindex,
+           grades.grade AS grade
+    FROM grades
+    ORDER BY grades.grade) AS g
+WHERE
+g.rowindex IN (FLOOR(@rowindex / 2) , CEIL(@rowindex / 2));
 ```
