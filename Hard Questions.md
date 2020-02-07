@@ -14,6 +14,7 @@ SELECT COUNT(attendance)/(SELECT COUNT(*) FROM students)
                          WHERE attendance == "yes"
 ```
 <br/>
+
 - Which grade level had the largest drop in attendance between yesterday and today?
 ```
 SELECT grade_level, COUNT(attendance) FROM attendances AS A
@@ -23,6 +24,7 @@ SELECT grade_level, COUNT(attendance) FROM attendances AS A
          HAVING attendance == "yes"
          AND date == "02-06-2020"
 ```
+
 <br/>
 
 **(2) I have two tables. Like this.**
@@ -49,6 +51,7 @@ I need to make a query and get something like this:
 | 11      | 101      | 90       | bar  |
 
 <br/>
+
 ```
 SELECT idItem, (case when type=1 then value end) as valtype1,
                (case when type=2 then value end) as valtype2,
