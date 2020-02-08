@@ -113,5 +113,3 @@ WHERE A1.Sales < A2.Sales OR A1.Sales = A2.Sales
 GROUP BY A1.Name, A1.Sales
 ORDER BY A1.Sales DESC, A1.Name;
 ```
-
-**(6) 
