@@ -86,3 +86,32 @@ from mytable
 group by bin_floor
 order by bin_floor
 ```
+
+**(5) Ranking**
+Table: total_sales
+|Name	|Sales|
+------|------
+John	|10
+Jennifer	|15
+Stella	|20
+Sophia	|40
+Greg	|50
+Jeff	|20
+
+```
+SET @rowindex = 0;
+ 
+SELECT Name, Sales, @rowindex:=@rowindex + 1 AS rank
+FROM total_sales
+ORDER BY Sales DESC, Name
+```
+or
+```
+SELECT A1.Name, A1.Sales, COUNT(A2.Sales) AS Rank
+FROM total_sales AS A1, total_sales AS A2
+WHERE A1.Sales < A2.Sales OR A1.Sales = A2.Sales
+GROUP BY A1.Name, A1.Sales
+ORDER BY A1.Sales DESC, A1.Name;
+```
+
+**(6) 
