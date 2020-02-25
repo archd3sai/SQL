@@ -113,3 +113,33 @@ WHERE A1.Sales < A2.Sales OR A1.Sales = A2.Sales
 GROUP BY A1.Name, A1.Sales
 ORDER BY A1.Sales DESC, A1.Name;
 ```
+
+**(6) I have a table like this:**
+```
+Id  min_val  max_val
+1   5        7
+2   8        12
+3   4        6
+```
+**I want to get True/False if the min_val and max_val are overlapping with any other ID. So, result like below:**
+```
+Id result
+1  True  
+2  False 
+3  True
+```
+<br/>
+**Answer:**
+
+```
+SELECT t2.id, 
+
+CASE WHEN t2.id IN
+(SELECT DISTINCT t.id
+FROM tab1 as t
+LEFT JOIN tab1 AS t1
+WHERE t.id <> t1.id AND (t.min_val < t1.max_val AND t.max_val > t.min_val)) 
+THEN "True" ELSE "False" END AS Results
+
+FROM tab1 as t2
+```
