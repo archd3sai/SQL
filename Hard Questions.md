@@ -129,7 +129,8 @@ Id result
 3  True
 ```
 <br/>
-**Answer:**
+
+- Answer
 
 ```
 SELECT t2.id, 
