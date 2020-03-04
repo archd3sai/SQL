@@ -27,3 +27,12 @@ SELECT IF(cnt % 2 = 1 AND id = cnt, id, IF(id % 2 = 1, id + 1, id - 1)) AS id, s
 (SELECT COUNT(*) AS cnt FROM seat) AS t
 ORDER BY id;
 ```
+
+### Rank Scores
+```
+SELECT s.Score, COUNT(t.Score) AS Rank FROM
+(SELECT DISTINCT Score FROM Scores) as t, Scores as s
+WHERE s.Score<=t.Score
+GROUP BY s.Id, s.Score
+ORDER BY Rank
+```
