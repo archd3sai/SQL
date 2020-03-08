@@ -1,3 +1,18 @@
+### Nth Highest Salary
+
+```
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+  RETURN (
+      SELECT Salary FROM Employee e1 
+      WHERE N-1 = (SELECT COUNT(DISTINCT Salary) FROM Employee e2 
+                   WHERE e2.salary > e1.salary)
+
+  );
+END
+```
+
+
 ### Department Highest Salary
 
 ```
