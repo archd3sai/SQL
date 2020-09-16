@@ -48,12 +48,11 @@ ORDER BY E2.Salary DESC LIMIT 3)
 ### Question: Trips and Users [Link](https://leetcode.com/problems/trips-and-users/)
 
 ```
-# Write your MySQL query statement below
 SELECT T.Request_at AS Day, 
     ROUND(AVG(CASE WHEN T.Status like 'cancelled%' THEN 1 ELSE 0 END), 2) AS 'Cancellation Rate'
 FROM Trips T
 JOIN Users U ON T.Client_Id = U.Users_Id
-WHERE U.Banned = 'No'
+WHERE U.Banned = 'No' AND T.Request_at BETWEEN '2013-10-01' AND '2013-10-03'
 GROUP BY T.Request_at
 ```
 
