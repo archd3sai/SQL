@@ -22,6 +22,7 @@ id-2 in (select id from stadium where people>=100)
 
 ### Question: Department Top 3 Salaries [Link](https://leetcode.com/problems/department-top-three-salaries/)
 
+Solution 1:
 ```
 SELECT D.Name AS Department, E.Name AS Employee, E.Salary AS Salary 
 FROM Employee E JOIN Department D ON E.DepartmentId = D.Id 
@@ -31,7 +32,7 @@ WHERE (SELECT COUNT(DISTINCT(Salary)) FROM Employee
 
 ORDER by E.DepartmentId, E.Salary DESC;
 ```
-
+Solution 2:
 ```
 # Write your MySQL query statement below
 SELECT D.Name AS Department, E.Name AS Employee, E.Salary 
