@@ -1,5 +1,5 @@
 
-### Question: [Link](https://leetcode.com/problems/human-traffic-of-stadium/)
+### Question: Human Traffic of Stadium [Link](https://leetcode.com/problems/human-traffic-of-stadium/)
 ```
 select id, visit_date, people from stadium where people >=100 and
 (
@@ -20,7 +20,7 @@ id-2 in (select id from stadium where people>=100)
 );
 ```
 
-### Question: [Link](https://leetcode.com/problems/department-top-three-salaries/)
+### Question: Department Top 3 Salaries [Link](https://leetcode.com/problems/department-top-three-salaries/)
 
 ```
 SELECT D.Name AS Department, E.Name AS Employee, E.Salary AS Salary 
@@ -45,5 +45,15 @@ WHERE E2.DepartmentId = E.DepartmentId
 ORDER BY E2.Salary DESC LIMIT 3)
 ```
 
-### Question: [Link](https://leetcode.com/problems/trips-and-users/)
+### Question: Trips and Users [Link](https://leetcode.com/problems/trips-and-users/)
+
+```
+# Write your MySQL query statement below
+SELECT T.Request_at AS Day, 
+    ROUND(AVG(CASE WHEN T.Status like 'cancelled%' THEN 1 ELSE 0 END), 2) AS 'Cancellation Rate'
+FROM Trips T
+JOIN Users U ON T.Client_Id = U.Users_Id
+WHERE U.Banned = 'No'
+GROUP BY T.Request_at
+```
 
