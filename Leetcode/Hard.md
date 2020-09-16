@@ -33,17 +33,19 @@ ORDER by E.DepartmentId, E.Salary DESC;
 ```
 
 ```
+# Write your MySQL query statement below
 SELECT D.Name AS Department, E.Name AS Employee, E.Salary 
 FROM Employee AS E
 JOIN Department AS D ON E.DepartmentId = D.Id
 
-WHERE E.Salary IN 
+WHERE E.Salary IN
 
-(SELECT DISTINCT E2.Salary 
+(SELECT * FROM (SELECT DISTINCT E2.Salary 
 FROM Employee AS E2
 WHERE E2.DepartmentId = E.DepartmentId
-ORDER BY E2.Salary DESC LIMIT 3)
+ORDER BY E2.Salary DESC LIMIT 3) AS sq)
 ```
+**Note:** Since Mysql does not allow a LIMIT clause in sub query. So, we override this limitation by wrapping our subquery inside another query. 
 
 ### Question: Trips and Users [Link](https://leetcode.com/problems/trips-and-users/)
 
