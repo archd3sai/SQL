@@ -1,7 +1,6 @@
-/*
-Enter your query below.
-Please append a semicolon ";" at the end of the query
-*/
+# Hackerrank IBM test
+
+```
 SELECT F.ACTIVITY FROM FRIENDS F
 GROUP BY F.ACTIVITY
 HAVING COUNT(*) 
@@ -12,5 +11,5 @@ FROM FRIENDS GROUP BY ACTIVITY) AS T1),
 (SELECT MIN(TOTAL) FROM (SELECT COUNT(*) AS TOTAL
 FROM FRIENDS GROUP BY ACTIVITY) AS T2)
 )
-
+```
 
