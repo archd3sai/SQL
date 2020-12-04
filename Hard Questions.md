@@ -144,3 +144,39 @@ THEN "True" ELSE "False" END AS Results
 
 FROM tab1 as t2
 ```
+
+**(7) Match Win lose**
+
+Table:
+```
+Create Table Match_Result (
+Team_1 Varchar(20),
+Team_2 Varchar(20),
+Result Varchar(20)
+);
+
+Insert into Match_Result Values('India', 'Australia','India');
+Insert into Match_Result Values('India', 'England','England');
+Insert into Match_Result Values('SouthAfrica', 'India','India');
+Insert into Match_Result Values('Australia', 'England',NULL);
+Insert into Match_Result Values('England', 'SouthAfrica','SouthAfrica');
+Insert into Match_Result Values('Australia', 'India','Australia');
+```
+
+Find team, total matches played by team, total wins, loses and ties.
+
+```
+SELECT T2.Team, 
+	T2.Match_Played, 
+	SUM(CASE WHEN T2.Team = M.Result THEN 1 ELSE 0 END) AS Match_Won,
+	SUM(CASE WHEN T2.Team != M.Result THEN 1 ELSE 0 END) AS Match_Lost,
+	SUM(CASE WHEN M.Result IS NULL THEN 1 ELSE 0 END) AS Match_Tied
+FROM
+(SELECT Team, COUNT(*) AS Match_Played FROM 
+(SELECT Team_1 AS Team FROM Match_Result
+UNION ALL
+SELECT Team_2 AS Team FROM Match_Result) AS T
+GROUP BY Team) AS T2, Match_Result AS M
+WHERE T2.Team = M.Team_1 OR T2.Team = M.Team_2
+GROUP BY T2.Team, T2.Match_Played;
+```
