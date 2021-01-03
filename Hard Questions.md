@@ -180,3 +180,44 @@ GROUP BY Team) AS T2, Match_Result AS M
 WHERE T2.Team = M.Team_1 OR T2.Team = M.Team_2
 GROUP BY T2.Team, T2.Match_Played;
 ```
+
+**(8) Find Consecutive Numbers**
+
+```
+Create Table tab (
+id INT PRIMARY KEY,
+val INT
+);
+
+Insert into tab Values(1, 1);
+Insert into tab Values(2, 1);
+Insert into tab Values(3, 2);
+Insert into tab Values(4, 3);
+Insert into tab Values(5, 3);
+Insert into tab Values(6, 3);
+Insert into tab Values(7, 1);
+Insert into tab Values(8, 1);
+Insert into tab Values(9, 2);
+```
+
+Desired Result:
+```
+val consecutive_times
+1   2
+2   1
+3   3
+1   2
+2   1
+```
+
+Answer:
+```
+SET @r1 =1, @r2 = 1;
+SELECT MIN(val), COUNT(*)
+FROM 
+(SELECT id, val,
+  IF(@r2 != val, @r1:=@r1+1 , @r1) AS r1, 
+  IF(@r2 != val, @r2:=val , @r2) AS r2 
+FROM tab) AS T
+GROUP BY r1
+```
