@@ -24,6 +24,47 @@ VALUES (1, 'Jolly', 'Female', 20, 500),
 (10, 'Elis', 'Female', 27, 400);
 ```
 
+Find:
+```
+(1) Cumulative score by gender
+(2) Rolling average of 3 people
+(3) Info of a student having minimum marks by gender. If more than 1 than student with minimum id.
+```
+
+Answers:
+(2)
+```
+SELECT S1.id, S1.name, S1.gender, S1.total_score, AVG(S2.total_score) 
+FROM student S1, student S2
+WHERE S1.id - S2.id BETWEEN 0 AND 2
+GROUP BY S1.id
+```
+
+OR
+
+```
+SET @laglag := 0, @lag := 0;
+
+SELECT id, name, gender, age, total_score,
+   (total_score + lagscore+ lagscore)/3 AS MovingAvg
+FROM
+(SELECT *, @lag AS lagscore, @laglag AS laglagscore, 
+    @laglag := @lag, @lag:=total_score   
+FROM student S1) AS T
+```
+
+
+(3)
+```
+SELECT id, name, S.gender, total_score
+FROM student AS S
+WHERE S.id = (SELECT id
+              FROM student WHERE gender = S.gender
+              ORDER BY total_score, id 
+              LIMIT 1)
+```
+
+
 ### Sample
 
 ```
