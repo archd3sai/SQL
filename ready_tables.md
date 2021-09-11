@@ -1,4 +1,4 @@
-### Student
+### (1) Student Score
 
 ```
 CREATE TABLE student
@@ -64,8 +64,54 @@ WHERE S.id = (SELECT id
               LIMIT 1)
 ```
 
+### (2) Sensor Data
 
-### Sample
+Given sensor data as below VAL shows if a machine is up or down. When a value is received, it shows condition of a machine at that time. For example, machine was came up at 2021-01-01 00:41:20 and it went down on 2021-01-01 00:41:55. 
+
+```
+Create Table seq_data (
+TS datetime,
+VAL INT
+);
+
+Insert into seq_data Values('2021-01-01 00:40:00', 0);
+Insert into seq_data Values('2021-01-01 00:41:20', 1);
+Insert into seq_data Values('2021-01-01 00:41:26', 1);
+Insert into seq_data Values('2021-01-01 00:41:55', 0);
+Insert into seq_data Values('2021-01-01 00:42:20', 1);
+Insert into seq_data Values('2021-01-01 00:42:32', 0);
+Insert into seq_data Values('2021-01-01 00:42:45', 0);
+Insert into seq_data Values('2021-01-01 00:44:10', 0);
+Insert into seq_data Values('2021-01-01 00:44:12', 1);
+Insert into seq_data Values('2021-01-01 00:45:46', 1);
+Insert into seq_data Values('2021-01-01 00:46:05', 0);
+```
+
+Find:
+```
+1. What is the total downtime, average downtime and longest downtime of the device?
+2. How to find the maximum length of an uninterrupted 1 value sequence?
+3. How many times does the sensor switch between the two?
+```
+
+Answers: (1)
+```
+SELECT SUM(downtime) AS total_downtime, 
+AVG(downtime) AS average_downtime,
+MAX(downtime) maximum_downtime, 
+COUNT(downtime) number_of_downtimes from
+(SELECT end_time - MIN(start_time) AS downtime from
+(SELECT s1.TS AS start_time, MIN(s2.TS) AS end_time
+FROM seq_data s1, seq_data s2
+WHERE s2.TS > s1.TS
+AND s1.VAL = 0
+AND s2.VAL = 1
+GROUP BY s1.TS) T
+GROUP BY end_time) T2;
+
+```
+
+### Sample data
 
 ```
 Create Table tab (
