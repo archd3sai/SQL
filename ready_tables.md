@@ -1,3 +1,5 @@
+## Tables and Questions
+
 ### (1) Student Score
 
 ```
@@ -90,7 +92,7 @@ Insert into seq_data Values('2021-01-01 00:46:05', 0);
 Find:
 ```
 1. What is the total downtime, average downtime and longest downtime of the device?
-2. How to find the maximum length of an uninterrupted 1 value sequence?
+2. How to find the maximum length of an uninterrupted 0 value sequence?
 3. How many times does the sensor switch between the two?
 ```
 
@@ -111,7 +113,30 @@ GROUP BY end_time) T2;
 
 ```
 
-### Sample data
+(2)
+```
+set @counter = 0;
+
+select MAX(consec_num) AS max_consecutive_0 from
+(select TS, 
+if (VAL = 1=0, @counter := @counter + 1, @counter:=0) 
+AS consec_num
+from seq_data) t
+```
+
+(3)
+```
+select count(*) as switch_count from 
+(select s1.VAL as val1, s2.VAL as val2
+from seq_data s1, seq_data s2
+where s1.TS < s2.TS
+group by s1.TS, s1.val) T
+where val1 <> val2
+```
+
+
+
+## Sample data
 
 ```
 Create Table tab (
