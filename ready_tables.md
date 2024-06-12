@@ -28,12 +28,19 @@ VALUES (1, 'Jolly', 'Female', 20, 500),
 
 Find:
 ```
-(1) Cumulative score by gender
+(1) Cumulative score by gender ordered by id
 (2) Rolling average of 3 people
 (3) Info of a student having minimum marks by gender. If more than 1 than student with minimum id.
 ```
 
 Answers:
+(1)
+```
+SELECT *, SUM(total_score) OVER(PARTITION BY gender ORDER BY id) as cumulative_score
+FROM student
+ORDER BY id
+```
+
 (2)
 ```
 SELECT S1.id, S1.name, S1.gender, S1.total_score, AVG(S2.total_score) 
@@ -45,14 +52,9 @@ GROUP BY S1.id
 OR
 
 ```
-SET @laglag := 0, @lag := 0;
-
-SELECT id, name, gender, age, total_score,
-   (total_score + lagscore+ lagscore)/3 AS MovingAvg
-FROM
-(SELECT *, @lag AS lagscore, @laglag AS laglagscore, 
-    @laglag := @lag, @lag:=total_score   
-FROM student S1) AS T
+SELECT *, AVG(total_score) OVER(ORDER BY ID ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) as moving_avg
+FROM student
+ORDER BY id
 ```
 
 
@@ -64,6 +66,15 @@ WHERE S.id = (SELECT id
               FROM student WHERE gender = S.gender
               ORDER BY total_score, id 
               LIMIT 1)
+```
+OR
+```
+WITH min_score_tab as (
+SELECT id, name, total_score, 
+RANK() OVER(PARTITION BY gender order by total_score, id) as rnk
+FROM student)
+select id, name, total_score from min_score_tab
+where rnk = 1;
 ```
 
 ### (2) Sensor Data
@@ -98,40 +109,89 @@ Find:
 
 Answers: (1)
 ```
-SELECT SUM(downtime) AS total_downtime, 
-AVG(downtime) AS average_downtime,
-MAX(downtime) maximum_downtime, 
-COUNT(downtime) number_of_downtimes from
-(SELECT end_time - MIN(start_time) AS downtime from
-(SELECT s1.TS AS start_time, MIN(s2.TS) AS end_time
-FROM seq_data s1, seq_data s2
-WHERE s2.TS > s1.TS
-AND s1.VAL = 0
-AND s2.VAL = 1
-GROUP BY s1.TS) T
-GROUP BY end_time) T2;
+WITH calculated AS (
+    SELECT 
+        TS, 
+        VAL, 
+        LAG(VAL) OVER (ORDER BY TS) AS lag_val,
+        LAG(TS) OVER (ORDER BY TS) AS lag_ts,
+        LEAD(VAL) OVER (ORDER BY TS) AS lead_val,
+        LEAD(TS) OVER (ORDER BY TS) AS lead_ts
+    FROM 
+        seq_data
+),
+downtime_raw AS (
+    SELECT 
+        * 
+    FROM 
+        calculated 
+    WHERE 
+        NOT (VAL = 0 AND lag_val = 0) OR (lag_val IS NULL)
+),
+downtime_events AS (
+    SELECT 
+        TS, 
+        VAL, 
+        EXTRACT(EPOCH FROM TS) - EXTRACT(EPOCH FROM lag_ts) AS time_diff 
+    FROM 
+        downtime_raw
+    WHERE 
+        VAL = 1 AND lag_val = 0
+)
+SELECT 
+    AVG(time_diff) AS avg_downtime, 
+    COUNT(time_diff) AS total_downtime_events, 
+    SUM(time_diff) AS total_downtime 
+FROM 
+    downtime_events;
 
 ```
 
 (2)
 ```
-set @counter = 0;
+WITH grp_sequences AS (
+    SELECT
+        TS,
+        VAL,
+        ROW_NUMBER() OVER (ORDER BY TS) - ROW_NUMBER() OVER (PARTITION BY VAL ORDER BY TS) AS grp
+    FROM
+        seq_data
+) 
+SELECT COUNT(*) AS zero_seq
+FROM grp_sequences
+WHERE VAL = 0
+GROUP BY grp
+ORDER BY zero_seq DESC
+LIMIT 1
+```
 
-select MAX(consec_num) AS max_consecutive_0 from
-(select TS, 
-if (VAL = 1=0, @counter := @counter + 1, @counter:=0) 
-AS consec_num
-from seq_data) t
+
+Below makes group until value changes
+```
+ SELECT
+        TS,
+        VAL, ROW_NUMBER() OVER (ORDER BY TS) as a,
+        ROW_NUMBER() OVER (PARTITION BY VAL ORDER BY TS) as b, 
+        ROW_NUMBER() OVER (ORDER BY TS) - ROW_NUMBER() OVER (PARTITION BY VAL ORDER BY TS) AS grp
+    FROM
+        seq_data
 ```
 
 (3)
 ```
-select count(*) as switch_count from 
-(select s1.VAL as val1, s2.VAL as val2
-from seq_data s1, seq_data s2
-where s1.TS < s2.TS
-group by s1.TS, s1.val) T
-where val1 <> val2
+SELECT
+    COUNT(*) AS switch_count
+FROM
+    (
+        SELECT
+            TS,
+            VAL,
+            LAG(VAL) OVER (ORDER BY TS) AS prev_val
+        FROM
+            seq_data
+    ) AS switch_events
+WHERE
+    VAL <> prev_val;
 ```
 
 
