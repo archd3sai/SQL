@@ -6,24 +6,42 @@ Using this data, could you answer questions like the following:
 
 - What percent of students attend school on their birthday?
 ```
-SELECT 100*COUNT(attendance)/(SELECT COUNT(*) FROM students) 
-                         FROM attendances AS A
-                         JOIN students AS S
-                         ON A.date = S.date_of_birth AND A.student_id = S.student_id
-                         WHERE attendance == "yes"
+WITH birthday_attendance AS (
+    SELECT 
+        S.student_id,
+        A.date AS attendance_date,
+        S.date_of_birth,
+        CASE 
+            WHEN A.attendance = 'yes'
+            THEN 1 
+            ELSE 0 
+        END AS attended_on_birthday
+    FROM 
+        attendances AS A
+    INNER JOIN 
+        students AS S ON A.student_id = S.student_id
+    WHERE 
+        DATE_PART('day', A.date) = DATE_PART('day', S.date_of_birth) 
+        AND DATE_PART('month', A.date) = DATE_PART('month', S.date_of_birth) 
+)
+SELECT 
+    AVG(attended_on_birthday) * 100 AS percent_attended_on_birthday
+FROM 
+    birthday_attendance;
 ```
 <br/>
 
 - Which grade level had the largest drop in attendance between yesterday and today?
 ```
-SELECT grade_level, SUM(CASE WHEN A.date = DATE('now') THEN 1 ELSE -1 END) AS attendance_drop
-         FROM attendances AS A
-         INNER JOIN students AS S
-         ON A.student_id = S.student_id 
-         WHERE A.attendance = "yes" AND A.date IN (date('now'), date('now', '-1 day'))
-         GROUP BY grade_level
-         ORDER BY attendance_drop DESC
-         LIMIT 1
+SELECT grade_level, 
+       SUM(CASE WHEN A.date = CURRENT_DATE THEN 1 ELSE -1 END) AS attendance_drop
+FROM attendances AS A
+INNER JOIN students AS S ON A.student_id = S.student_id 
+WHERE A.attendance = 'yes' 
+  AND A.date IN (CURRENT_DATE, CURRENT_DATE - INTERVAL '1 day')
+GROUP BY grade_level
+ORDER BY attendance_drop DESC
+LIMIT 1;
 ```
 
 <br/>
